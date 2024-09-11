@@ -3,7 +3,7 @@ package com.app.vgtask.data.models
 data class Trip(
     val id: String,
     val name: String,
-    val type: String,
+    val style: String,
     val imageUrl: String,
     val start: Long,
     val end: Long,
