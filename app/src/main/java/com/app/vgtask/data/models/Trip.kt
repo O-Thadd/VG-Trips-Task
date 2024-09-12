@@ -2,6 +2,9 @@ package com.app.vgtask.data.models
 
 import com.app.vgtask.getFormattedDate
 import com.app.vgtask.ui.TripStyle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 data class Trip(
     val id: String,
@@ -30,7 +33,7 @@ data class UiTrip(
     val hotels: List<String>
 )
 
-fun Trip.toUiTrip(getCity: (String) -> City): UiTrip{
+suspend fun Trip.toUiTrip(scope: CoroutineScope, getCity: suspend (String) -> City): UiTrip{
     val durationInMillis = end - start
     val durationInDays = durationInMillis / (1000 * 60 * 60 * 24)
     val city = getCity(destinationId)

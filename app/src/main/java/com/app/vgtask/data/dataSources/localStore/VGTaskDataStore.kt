@@ -6,8 +6,11 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.app.vgtask.dataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class VGTaskDataStore(private val context: Context) {
+@Singleton
+class VGTaskDataStore @Inject constructor(private val context: Context) {
 
     private val userIdKey = stringPreferencesKey("userIdKey")
 

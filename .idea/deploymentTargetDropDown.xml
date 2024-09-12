@@ -2,24 +2,17 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="PrevDateScreen">
+        <State />
+      </entry>
       <entry key="PrevHomeScreen">
         <State />
       </entry>
+      <entry key="PrevTripCreation">
+        <State />
+      </entry>
       <entry key="app">
-        <State>
-          <runningDeviceTargetSelectedWithDropDown>
-            <Target>
-              <type value="RUNNING_DEVICE_TARGET" />
-              <deviceKey>
-                <Key>
-                  <type value="SERIAL_NUMBER" />
-                  <value value="RF8MA1259XL" />
-                </Key>
-              </deviceKey>
-            </Target>
-          </runningDeviceTargetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-09-12T01:19:54.683102200Z" />
-        </State>
+        <State />
       </entry>
     </value>
   </component>

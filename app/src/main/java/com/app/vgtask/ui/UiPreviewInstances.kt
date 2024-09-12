@@ -1,5 +1,6 @@
 package com.app.vgtask.ui
 
+import com.app.vgtask.data.models.City
 import com.app.vgtask.data.models.UiTrip
 import com.app.vgtask.ui.home.HomeUiState
 
@@ -48,4 +49,33 @@ val trip3 = UiTrip(
     hotels = emptyList()
 )
 
-val testPreviewHomeUiState = HomeUiState(listOf(trip1, trip2, trip3))
+val testPreviewTrips = listOf(trip1, trip2, trip3)
+
+val city1 = City(
+    id = "city1",
+    name = "Tokyo",
+    country =  "Japan",
+    flag = "https://flagcdn.com/w320/jp.png",
+    countryCode = "JP",
+    image = "https://firebasestorage.googleapis.com/v0/b/thadd-dev-realm.appspot.com/o/cities-pics%2Ftokyo.jpg?alt=media&token=c43746c8-5a82-4cf5-b26b-1ce892f262a2"
+)
+
+val city2 = City(
+    id = "city2",
+    name = "Delhi",
+    country =  "India",
+    flag = "https://flagcdn.com/w320/in.png",
+    countryCode = "IN",
+    image = "https://firebasestorage.googleapis.com/v0/b/thadd-dev-realm.appspot.com/o/cities-pics%2Fdelhi.png?alt=media&token=f6b9f84d-9d22-4003-b163-4998ca220f47"
+)
+
+val city3 = City(
+    id = "city3",
+    name = "Paris",
+    country =  "France",
+    flag = "https://flagcdn.com/w320/fr.png",
+    countryCode = "FR",
+    image = "https://firebasestorage.googleapis.com/v0/b/thadd-dev-realm.appspot.com/o/cities-pics%2Fparis.jpg?alt=media&token=8e816bcb-e82f-478b-9ecd-c37092d0bb90"
+)
+
+val testPreviewCities = listOf(city1, city2, city3)

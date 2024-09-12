@@ -3,8 +3,6 @@ package com.app.vgtask.ui.home
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -41,19 +38,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.app.vgtask.R
-import com.app.vgtask.ui.testPreviewHomeUiState
+import com.app.vgtask.data.models.UiTrip
+import com.app.vgtask.ui.testPreviewTrips
 import com.app.vgtask.ui.theme.VGTaskTheme
 
 @Composable
 fun HomeScreen() {
-
+    val viewModel: HomeViewModel = hiltViewModel()
+    val trips by viewModel.trips.collectAsStateWithLifecycle()
+    StatelessHomeScreen(trips = trips)
 }
 
 @Composable
-fun StatelessHomeScreen(uiState: HomeUiState){
+fun StatelessHomeScreen(trips: List<UiTrip>){
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier.verticalScroll(state = scrollState)
@@ -321,7 +323,7 @@ fun StatelessHomeScreen(uiState: HomeUiState){
 //                    )
 //                }
 
-            for (trip in uiState.trips){
+            for (trip in trips){
                 Column {
                     Surface(
                         shape = RoundedCornerShape(4.dp),
@@ -339,7 +341,9 @@ fun StatelessHomeScreen(uiState: HomeUiState){
                                     .build(),
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop,
-                                modifier = Modifier.size(326.dp, 230.dp).clip(RoundedCornerShape(6.dp))
+                                modifier = Modifier
+                                    .size(326.dp, 230.dp)
+                                    .clip(RoundedCornerShape(6.dp))
                             )
                             Spacer(modifier = Modifier.height(14.dp))
                             Text(
@@ -389,6 +393,6 @@ fun StatelessHomeScreen(uiState: HomeUiState){
 @Composable
 private fun PrevHomeScreen() {
     VGTaskTheme {
-        StatelessHomeScreen(testPreviewHomeUiState)
+        StatelessHomeScreen(testPreviewTrips)
     }
 }

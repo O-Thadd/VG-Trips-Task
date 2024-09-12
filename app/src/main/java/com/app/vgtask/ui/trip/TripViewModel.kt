@@ -18,7 +18,7 @@ class TripViewModel(userRepo: UserRepo, savedStateHandle: SavedStateHandle): Vie
     init {
         viewModelScope.launch {
             val tripId: String = checkNotNull(savedStateHandle[TRIP_ID_KEY])
-            _trip.value = userRepo.getUser().trips.find { it.id == tripId }
+            _trip.value = userRepo.getUser().trips!!.find { it.id == tripId }
         }
     }
 }

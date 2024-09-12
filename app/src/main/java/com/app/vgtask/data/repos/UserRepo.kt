@@ -1,11 +1,12 @@
 package com.app.vgtask.data.repos
 
 import com.app.vgtask.data.dataSources.localStore.VGTaskDataStore
-import com.app.vgtask.data.dataSources.remote.VGTaskRemoteService
+import com.app.vgtask.data.dataSources.remote.UsersRemoteService
 import com.app.vgtask.data.models.Trip
 import com.app.vgtask.data.models.User
+import javax.inject.Inject
 
-class UserRepo(private val localStore: VGTaskDataStore, private val remoteService: VGTaskRemoteService) {
+class UserRepo @Inject constructor(private val localStore: VGTaskDataStore, private val remoteService: UsersRemoteService) {
 
     suspend fun getUser(): User {
         val userId = localStore.getUserId()
@@ -22,7 +23,8 @@ class UserRepo(private val localStore: VGTaskDataStore, private val remoteServic
     suspend fun addTrip(trip: Trip){
         val userId = localStore.getUserId()!!
         val user = remoteService.getUser(userId)
-        val newTrips = user.trips.toMutableList().apply { add(trip) }
+        val newTrips = if (user.trips != null ) user.trips.toMutableList() else mutableListOf()
+        newTrips.add(trip)
         remoteService.updateUser(userId, user.copy(trips = newTrips))
     }
 }
