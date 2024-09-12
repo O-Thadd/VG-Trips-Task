@@ -3,7 +3,7 @@ package com.app.vgtask
 import android.icu.util.Calendar
 import java.text.SimpleDateFormat
 
-fun generateCalendarItems(startAt: Long? = null, numberOfMonthsIntoTheFuture: Int = 6): List<CalendarItemsMonthGroup>{
+fun generateCalendarItems(startAt: Long? = null, numberOfMonthsIntoTheFuture: Int = 10): List<CalendarItemsMonthGroup>{
     val monthCalendar =
         startAt?.let { Calendar.getInstance().apply { timeInMillis = startAt } } ?:
         Calendar.getInstance()
@@ -37,12 +37,8 @@ private fun addItemsForMonth(
 
     //set calendar to first day of the month
     thisMonthCalendar.set(Calendar.DAY_OF_MONTH, 1)
-    // this is offset by 1. i.e it goes sun to sat. sunday is 1 and sat is 7.
-    // but we desire mon - sun. monday should be 1 and sunday 7.
-    var dayOfWeek = thisMonthCalendar.get(Calendar.DAY_OF_WEEK)
-//    var position = if (dayOfWeek == 1) dayOfWeek + 6 else dayOfWeek - 1
-//    var date = 1
 
+    var dayOfWeek = thisMonthCalendar.get(Calendar.DAY_OF_WEEK)
 
     if (dayOfWeek != 2) {
         addExtrasFromPreviousMonth(thisMonthCalendar, dayOfWeek, items)

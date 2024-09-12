@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -151,10 +153,109 @@ fun DateScreen() {
             Surface(
                 color = Color.White,
                 border = BorderStroke(1.dp, Color(0xFFF0F2F5)),
-                modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp)
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
             ) {
-                Row {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp)
+                ) {
+                    Row {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            val selected by remember(state.activeDateSelection) {
+                                mutableStateOf(state.activeDateSelection == DateSelection.START)
+                            }
+                            Text(
+                                text = "Start Date",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = Color(0xFF1D2433),
+                            )
+                            Surface(
+                                shape = RoundedCornerShape(4.dp),
+                                color = if (selected) MaterialTheme.colorScheme.primary else Color.White,
+                                border = BorderStroke(1.dp, Color(0xFF98A2B3)),
+                                modifier = Modifier.clickable { state = state.copy(activeDateSelection = DateSelection.START) }
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(14.dp)
+                                ) {
+                                    Text(
+                                        text = state.startDate,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = if (selected) Color.White else Color(0xFF1D2433),
+                                    )
+                                    Spacer(modifier = Modifier.weight(1f))
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.calendarblanksmall),
+                                        contentDescription = null,
+                                        tint = if (selected) Color.White else Color(0xFF344054)
+                                    )
+                                }
+                            }
+                        }
 
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            val selected by remember(state.activeDateSelection) {
+                                mutableStateOf(state.activeDateSelection == DateSelection.END)
+                            }
+                            Text(
+                                text = "End Date",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = Color(0xFF1D2433),
+                            )
+                            Surface(
+                                shape = RoundedCornerShape(4.dp),
+                                color = if (selected) MaterialTheme.colorScheme.primary else Color.White,
+                                border = BorderStroke(1.dp, Color(0xFF98A2B3)),
+                                modifier = Modifier.clickable { state = state.copy(activeDateSelection = DateSelection.END) }
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(14.dp)
+                                ) {
+                                    Text(
+                                        text = state.endDate,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = if (selected) Color.White else Color(0xFF1D2433),
+                                    )
+                                    Spacer(modifier = Modifier.weight(1f))
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.calendarblanksmall),
+                                        contentDescription = null,
+                                        tint = if (selected) Color.White else Color(0xFF344054)
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    FilledTonalButton(
+                        onClick = { /*TODO*/ },
+                        shape = RoundedCornerShape(4.dp),
+                        enabled = state.startDate != "---" && state.endDate != "---",
+                        colors = ButtonDefaults.filledTonalButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Choose Date",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(vertical = 13.dp)
+                        )
+                    }
                 }
             }
         }
