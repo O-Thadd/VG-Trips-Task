@@ -16,27 +16,34 @@ val regular = FontFamily(Font(R.font.satoshi_regular))
 
 // Set of Material typography styles to start with
 val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
+
+    headlineLarge = TextStyle(
+        fontFamily = bold,
+        fontSize = 18.sp
     ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+
+    headlineMedium = TextStyle(
+        fontFamily = black,
+        fontSize = 16.sp
+    ),
+
+    headlineSmall = TextStyle(
+        fontFamily = bold,
+        fontSize = 16.sp
+    ),
+
+    bodyLarge = TextStyle(
+        fontSize = 14.sp,
+        fontFamily = black,
+    ),
+
+    labelLarge = TextStyle(
+        fontFamily = medium,
+        fontSize = 16.sp
+    ),
+
+    labelMedium = TextStyle(
+        fontFamily = medium,
+        fontSize = 12.sp
     )
-    */
 )
