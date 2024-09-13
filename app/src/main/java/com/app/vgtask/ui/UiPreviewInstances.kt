@@ -2,7 +2,10 @@ package com.app.vgtask.ui
 
 import com.app.vgtask.data.models.City
 import com.app.vgtask.data.models.UiTrip
-import com.app.vgtask.ui.home.HomeUiState
+import com.app.vgtask.ui.models.DataStatus
+import com.app.vgtask.ui.models.TripStyle
+import com.app.vgtask.ui.models.VGTaskData
+import com.app.vgtask.ui.screens.tripCreation.TripCreationUiState
 
 val trip1 = UiTrip(
     id = "trip1",
@@ -14,9 +17,9 @@ val trip1 = UiTrip(
     endDate = "18 September 2024",
     duration = "7 days",
     ordinalStartDate = "11th September 2024",
-    activities = emptyList(),
-    flights = emptyList(),
-    hotels = emptyList()
+    hasActivities = false,
+    hasFlights = false,
+    hasHotels = false
 )
 
 val trip2 = UiTrip(
@@ -29,9 +32,9 @@ val trip2 = UiTrip(
     endDate = "2 October 2024",
     duration = "2 days",
     ordinalStartDate = "30th September 2024",
-    activities = emptyList(),
-    flights = emptyList(),
-    hotels = emptyList()
+    hasActivities = false,
+    hasFlights = false,
+    hasHotels = false
 )
 
 val trip3 = UiTrip(
@@ -44,9 +47,9 @@ val trip3 = UiTrip(
     endDate = "20 October 2024",
     duration = "19 days",
     ordinalStartDate = "1st October 2024",
-    activities = emptyList(),
-    flights = emptyList(),
-    hotels = emptyList()
+    hasActivities = false,
+    hasFlights = false,
+    hasHotels = false
 )
 
 val testPreviewTrips = listOf(trip1, trip2, trip3)
@@ -79,3 +82,15 @@ val city3 = City(
 )
 
 val testPreviewCities = listOf(city1, city2, city3)
+
+val previewTestTripCreationUiState = TripCreationUiState(
+    VGTaskData(data = testPreviewCities, status = DataStatus.DEFAULT),
+    startDate = null,
+    endDate = null,
+    tripName = "",
+    style = "",
+    description = "",
+    destinationCityId = null,
+    creationStatus = DataStatus.DEFAULT,
+    newlyCreatedTripId = null
+)

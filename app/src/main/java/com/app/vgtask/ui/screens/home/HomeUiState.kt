@@ -1,4 +1,4 @@
-package com.app.vgtask.ui.home
+package com.app.vgtask.ui.screens.home
 
 import com.app.vgtask.data.models.Trip
 import com.app.vgtask.data.models.UiTrip

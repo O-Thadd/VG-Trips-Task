@@ -7,13 +7,13 @@ fun getFormattedDate(timestamp: Long, getOrdinalDate: Boolean = false): String{
     val calendar = Calendar.getInstance().apply { timeInMillis = timestamp }
 
     if (!getOrdinalDate){
-        val format = SimpleDateFormat("dd MMMMM yyyy")
+        val format = SimpleDateFormat("dd MMM yyyy")
         return format.format(calendar.time)
     }
 
     val date = calendar.get(Calendar.DATE)
     val ordinalDate = addSuffixToDate(date)
-    val format = SimpleDateFormat("MMMMM yyyy")
+    val format = SimpleDateFormat("MMM yyyy")
     val monthAndYear = format.format(calendar.time)
 
     return "$ordinalDate $monthAndYear"

@@ -1,10 +1,8 @@
 package com.app.vgtask.data.models
 
 import com.app.vgtask.getFormattedDate
-import com.app.vgtask.ui.TripStyle
+import com.app.vgtask.ui.models.TripStyle
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 
 data class Trip(
     val id: String,
@@ -13,9 +11,9 @@ data class Trip(
     val start: Long,
     val end: Long,
     val destinationId: String,
-    val activities: List<String>,
-    val flights: List<String>,
-    val hotels: List<String>
+    val hasActivities: Boolean,
+    val hasFlight: Boolean,
+    val hasHotels: Boolean
 )
 
 data class UiTrip(
@@ -28,9 +26,9 @@ data class UiTrip(
     val destination: String,
     val imageUrl: String,
     val style: TripStyle,
-    val activities: List<String>,
-    val flights: List<String>,
-    val hotels: List<String>
+    val hasActivities: Boolean,
+    val hasFlights: Boolean,
+    val hasHotels: Boolean
 )
 
 suspend fun Trip.toUiTrip(scope: CoroutineScope, getCity: suspend (String) -> City): UiTrip{
@@ -48,8 +46,8 @@ suspend fun Trip.toUiTrip(scope: CoroutineScope, getCity: suspend (String) -> Ci
         destination = "${city.name}, ${city.country}",
         imageUrl = city.image,
         style = TripStyle.getStyle(style)!!,
-        activities = emptyList(),
-        flights = emptyList(),
-        hotels = emptyList()
+        hasActivities = hasActivities,
+        hasFlights = hasFlight,
+        hasHotels = hasHotels
     )
 }

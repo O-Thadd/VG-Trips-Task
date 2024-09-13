@@ -96,20 +96,27 @@ open class CalendarItem(
     val name: String,
     val value: Int? = null,
     val active: Boolean = false,
-    private val dateValues: Triple<Int, Int, Int>? = null,
+    val dateTriple: Triple<Int, Int, Int>? = null,
 ) {
-    val clickable = value != null
     val formattedDate: String? get() {
-        return dateValues?.let {
-            val date = Calendar.getInstance().apply {
+        val date = getCalendar().time
+        return SimpleDateFormat("EEE, MMM d").format(date)
+    }
+
+    fun getTimeStamp(): Long {
+        return getCalendar().timeInMillis
+    }
+
+    private fun getCalendar(): Calendar{
+        return dateTriple!!.let {
+            val calendar = Calendar.getInstance().apply {
                 set(Calendar.DAY_OF_MONTH, it.first)
                 set(Calendar.MONTH, it.second)
                 set(Calendar.YEAR, it.third)
-            }.time
-            SimpleDateFormat("EEE, MMM d").format(date)
+            }
+            calendar
         }
     }
-
 
 }
 

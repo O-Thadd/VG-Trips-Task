@@ -1,6 +1,6 @@
-package com.app.vgtask.ui
+package com.app.vgtask.ui.models
 
-enum class TripStyle(val string: String) {
+enum class TripStyle(val displayName: String) {
     SOLO("Solo"),
     COUPLE("Couple"),
     FAMILY("Family"),
@@ -9,7 +9,7 @@ enum class TripStyle(val string: String) {
 
     companion object{
         fun getStyle(string: String): TripStyle? {
-            return entries.find { it.string == string }
+            return entries.find { it.displayName == string }
         }
     }
 }

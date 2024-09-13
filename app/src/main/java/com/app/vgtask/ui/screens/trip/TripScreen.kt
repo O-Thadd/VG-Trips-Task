@@ -1,9 +1,12 @@
-package com.app.vgtask.ui.trip
+package com.app.vgtask.ui.screens.trip
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +20,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -24,6 +28,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,20 +38,57 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.app.vgtask.R
 import com.app.vgtask.data.models.UiTrip
+import com.app.vgtask.ui.models.DataStatus
 import com.app.vgtask.ui.theme.VGTaskTheme
 import com.app.vgtask.ui.theme.bold
 import com.app.vgtask.ui.theme.regular
 import com.app.vgtask.ui.trip1
+import com.app.vgtask.ui.trip2
 
 @Composable
-fun TripScreen(trip: UiTrip) {
+fun TripScreen(
+    goBackToHome: () -> Unit
+) {
+    val viewModel: TripViewModel = hiltViewModel()
+    val trip by viewModel.trip.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    if (trip.status == DataStatus.DEFAULT && trip.data != null){
+        StatelessTripScreen(trip = trip.data!!)
+    } else if (trip.status == DataStatus.BUSY){
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    }
+
+
+    if (trip.status == DataStatus.FAILED){
+        LaunchedEffect(key1 = trip.status) {
+            Toast.makeText(context, "Failed to get trip. Check network and try again", Toast.LENGTH_SHORT).show()
+            goBackToHome()
+        }
+    }
+
+}
+
+
+@Composable
+fun StatelessTripScreen(trip: UiTrip) {
     Column(
         modifier = Modifier.verticalScroll(rememberScrollState())
     ) {
@@ -227,18 +270,28 @@ fun TripScreen(trip: UiTrip) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            FlightItineraryCard(hasFlight = true)
+            FlightItineraryCard(hasFlight = false)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            HotelItineraryCard(hasHotel = false)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            ActivityItineraryCard(hasActivity = false)
         }
     }
 }
 
-//@Preview(widthDp = 412, showBackground = true)
-//@Composable
-//private fun PrevTestScreen() {
-//    VGTaskTheme {
-//        TripScreen(trip1)
-//    }
-//}
+@Preview(widthDp = 412, showBackground = true)
+@Composable
+private fun PrevTripScreen() {
+    VGTaskTheme {
+        StatelessTripScreen(
+            trip = trip2
+        )
+    }
+}
 
 @Composable
 fun AddItineraryCard(
@@ -522,10 +575,11 @@ fun FlightItineraryCard(hasFlight: Boolean) {
                         Row(
                             modifier = Modifier.padding(start = 16.dp)
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.currencyngn),
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
+                            Text(
+                                text = "N",
+                                textDecoration = TextDecoration.LineThrough,
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = Color(0xFF1D2433)
                             )
                             Text(
                                 text = "123,450.00",
@@ -774,10 +828,11 @@ fun HotelItineraryCard(hasHotel: Boolean) {
                         Row(
                             modifier = Modifier.padding(start = 16.dp)
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.currencyngn),
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
+                            Text(
+                                text = "N",
+                                textDecoration = TextDecoration.LineThrough,
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = Color(0xFF1D2433)
                             )
                             Text(
                                 text = "123,450.00",
@@ -859,7 +914,7 @@ fun ActivityItineraryCard(hasActivity: Boolean) {
                             .padding(vertical = 54.dp, horizontal = 50.dp)
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.hotel),
+                            painter = painterResource(id = R.drawable.air),
                             contentDescription = null,
                             modifier = Modifier.size(150.dp)
                         )
@@ -881,7 +936,7 @@ fun ActivityItineraryCard(hasActivity: Boolean) {
                             modifier = Modifier.width(228.dp)
                         ) {
                             Text(
-                                text = "Add Hotel",
+                                text = "Add Activity",
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                         }
@@ -895,7 +950,7 @@ fun ActivityItineraryCard(hasActivity: Boolean) {
                         Spacer(modifier = Modifier.height(20.dp))
 
                         Image(
-                            painter = painterResource(id = R.drawable.rectangle_3437),
+                            painter = painterResource(id = R.drawable.rectangle_3438),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
@@ -913,7 +968,7 @@ fun ActivityItineraryCard(hasActivity: Boolean) {
                             modifier = Modifier.padding(horizontal = 16.dp)
                         ) {
                             Text(
-                                text = "Riviera Resort, Lekki",
+                                text = "The Museum of Modern Art",
                                 style = MaterialTheme.typography.headlineSmall,
                                 color = Color.Black
                             )
@@ -921,7 +976,7 @@ fun ActivityItineraryCard(hasActivity: Boolean) {
                             Spacer(modifier = Modifier.height(6.dp))
 
                             Text(
-                                text = "18, Kenneth Agbakuru Street, Off Access Bank Admiralty Way, Lekki Phase1",
+                                text = "Works from Van Gogh to Warhol & beyond plus a sculpture garden, 2 cafes & The modern restaurant",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color(0xFF1D2433)
                             )
@@ -937,7 +992,7 @@ fun ActivityItineraryCard(hasActivity: Boolean) {
                                 )
 
                                 Text(
-                                    text = "Flight details",
+                                    text = "Melbourne, Austraila",
                                     style = MaterialTheme.typography.headlineSmall.copy(fontSize = 14.sp),
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -961,7 +1016,7 @@ fun ActivityItineraryCard(hasActivity: Boolean) {
                                 Spacer(modifier = Modifier.width(4.dp))
 
                                 Text(
-                                    text = "King size room",
+                                    text = "1 hour",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = Color(0xFF676E7E)
                                 )
@@ -977,22 +1032,32 @@ fun ActivityItineraryCard(hasActivity: Boolean) {
                             modifier = Modifier
                                 .padding(vertical = 10.dp, horizontal = 16.dp)
                         ) {
-                            Image(painter = painterResource(id = R.drawable.calendarblank), contentDescription = null)
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "In: 20-04-2024",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color(0xFF647995)
-                            )
+                            Column {
+                                Text(
+                                    text = "Change time",
+                                    textDecoration = TextDecoration.Underline,
+                                    style = MaterialTheme.typography.headlineSmall.copy(fontSize = 12.sp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
 
-                            Spacer(modifier = Modifier.width(12.dp))
+                                Spacer(modifier = Modifier.height(4.dp))
 
-                            Image(painter = painterResource(id = R.drawable.calendarblank), contentDescription = null)
-                            Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "10:30 AM on Mar 19",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = Color(0xFF1D2433)
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.weight(1f))
+
                             Text(
-                                text = " Out: 29-04-2024",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color(0xFF647995)
+                                text = "Day 1 (Activity 1)",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = Color(0xFF1D2433),
+                                modifier = Modifier
+                                    .background(Color(0xFFF0F2F5), RoundedCornerShape(4.dp))
+                                    .padding(vertical = 4.dp, horizontal = 8.dp)
                             )
                         }
 
@@ -1029,10 +1094,11 @@ fun ActivityItineraryCard(hasActivity: Boolean) {
                         Row(
                             modifier = Modifier.padding(start = 16.dp)
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.currencyngn),
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
+                            Text(
+                                text = "N",
+                                textDecoration = TextDecoration.LineThrough,
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = Color(0xFF1D2433)
                             )
                             Text(
                                 text = "123,450.00",
@@ -1072,10 +1138,10 @@ fun ActivityItineraryCard(hasActivity: Boolean) {
     }
 }
 
-@Preview(widthDp = 412, showBackground = true)
-@Composable
-private fun PrevActivityCard() {
-    VGTaskTheme {
-        ActivityItineraryCard(hasActivity = false)
-    }
-}
+//@Preview(widthDp = 412, showBackground = true)
+//@Composable
+//private fun PrevActivityCard() {
+//    VGTaskTheme {
+//        ActivityItineraryCard(hasActivity = true)
+//    }
+//}

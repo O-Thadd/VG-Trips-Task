@@ -8,12 +8,13 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import java.util.HashMap
 import java.util.Objects
 
-const val USERS_BASE_URL = "https://ca587c6ffc4c99c6d454.free.beeceptor.com"
-const val CITIES_BASE_URL = "https://cadc90082544c75a2ffd.free.beeceptor.com"
+const val USERS_BASE_URL = "https://ca3226c27342903d053f.free.beeceptor.com"
+const val CITIES_BASE_URL = "https://ca44ccc3a2f157445ed7.free.beeceptor.com"
 
 val interceptor = HttpLoggingInterceptor()
     .setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -29,7 +30,7 @@ interface UsersRemoteService {
     @GET("api/users/{id}")
     suspend fun getUser(@Path("id") userId: String): User
 
-    @GET("api/users/{id}")
+    @PUT("api/users/{id}")
     suspend fun updateUser(@Path("id") userId: String, @Body user: User)
 }
 
