@@ -19,8 +19,6 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -70,7 +68,7 @@ fun FinalizeScreen() {
                     )
                     Spacer(modifier = Modifier.weight(1f, true))
                     Icon(
-                        painter = painterResource(id = R.drawable.x),
+                        painter = painterResource(id = R.drawable.blackx),
                         contentDescription = null,
                         modifier = Modifier.size(20.dp)
                     )

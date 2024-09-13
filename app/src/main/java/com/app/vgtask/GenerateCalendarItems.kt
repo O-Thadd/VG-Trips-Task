@@ -7,19 +7,13 @@ fun generateCalendarItems(startAt: Long? = null, numberOfMonthsIntoTheFuture: In
     val monthCalendar =
         startAt?.let { Calendar.getInstance().apply { timeInMillis = startAt } } ?:
         Calendar.getInstance()
-    val calendarNow = getCalenderData(monthCalendar)
-    calendarNow
     var month = 1
     val monthGroups = mutableListOf<CalendarItemsMonthGroup>()
 
     while (month <= numberOfMonthsIntoTheFuture){
-        val calendarNow = getCalenderData(monthCalendar)
-        calendarNow
         addItemsForMonth(monthCalendar, monthGroups)
         monthCalendar.roll(Calendar.MONTH, 1)
         monthCalendar.synchronizeYearField()
-        val calendarNowx = getCalenderData(monthCalendar)
-        calendarNowx
         month++
     }
 
@@ -56,8 +50,6 @@ private fun addItemsForMonth(
         addExtrasFromFollowingMonth(dayOfWeek, items)
     }
 
-    val calendarNow = getCalenderData(thisMonthCalendar)
-    calendarNow
     val monthNumber = thisMonthCalendar.get(Calendar.MONTH)
     val year = thisMonthCalendar.get(Calendar.YEAR)
     val monthName = getMonthFromMonthNumber(monthNumber)
@@ -86,8 +78,6 @@ private fun addExtrasFromPreviousMonth(
         roll(Calendar.MONTH, -1)
         synchronizeYearField()
     }
-    val prevCalendarnow = getCalenderData(prevMonthCalendar)
-    prevCalendarnow
     val maxDayInPrevMonth = prevMonthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)
     val firstDayOfPrevMonthOverFlow = maxDayInPrevMonth - prevMonthOverflow + 1
     for (day in firstDayOfPrevMonthOverFlow..maxDayInPrevMonth) {
@@ -165,10 +155,4 @@ fun getMonthFromMonthNumber(monthNumber: Int): String{
 fun getDateValues(calendar: Calendar, date: Int): Triple<Int, Int, Int>{
     return with(calendar){ Triple(date, get(Calendar.MONTH), get(Calendar.YEAR)) }
 }
-
-//debug
-fun getCalenderData(calendar: Calendar): Triple<Int, Int, Int>{
-    return with(calendar){ Triple(get(Calendar.DAY_OF_MONTH), get(Calendar.MONTH), get(Calendar.YEAR)) }
-}
-
 

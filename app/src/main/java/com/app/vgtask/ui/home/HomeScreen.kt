@@ -306,23 +306,6 @@ fun StatelessHomeScreen(trips: List<UiTrip>){
 
             Spacer(modifier = Modifier.height(24.dp))
 
-
-//            Surface(
-//                    shape = RoundedCornerShape(4.dp),
-//                    border = BorderStroke(1.dp, Color(0xFFE4E7EC)),
-//                    modifier = Modifier.size(358.dp, 384.dp)
-//                ) {
-//                    AsyncImage(
-//                        model = ImageRequest.Builder(LocalContext.current)
-//                            .data(uiState.trips[0].imageUrl)
-//                            .crossfade(true)
-//                            .build(),
-//                        contentDescription = null,
-//                        contentScale = ContentScale.Crop,
-//                        modifier = Modifier.size(326.dp, 230.dp)
-//                    )
-//                }
-
             for (trip in trips){
                 Column {
                     Surface(

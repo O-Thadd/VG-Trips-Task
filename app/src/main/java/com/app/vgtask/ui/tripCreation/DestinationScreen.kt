@@ -44,7 +44,7 @@ fun DestinationScreen(uiState: TripCreationUiState) {
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.x),
+                painter = painterResource(id = R.drawable.arrowleft),
                 contentDescription = null,
                 modifier = Modifier.size(20.dp)
             )
