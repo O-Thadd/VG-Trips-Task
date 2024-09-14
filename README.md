@@ -2,7 +2,7 @@
 VG Trips is an Android app built entirely with Kotlin and Jetpack Compose. Following Android design and development best practices.
 
 The app simply implements a use flow of booking and viewing trips as well as accompanying itineraries.
-APK is available here ...
+APK is available [here](https://firebasestorage.googleapis.com/v0/b/thadd-dev-realm.appspot.com/o/vg-trips.apk?alt=media&token=4723fc2d-6fd0-40a4-a3d4-b7105e1a4846)
 
 ## Features
 Users can view their booked trips and book new trips. A destination can be selected from a list of cities; dates are chosen by picking start and end days on a calendar. The details of trip are shown as soon as booking is complete. Further itineraries can be added.
