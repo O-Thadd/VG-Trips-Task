@@ -13,7 +13,7 @@ import retrofit2.http.Path
 import java.util.HashMap
 import java.util.Objects
 
-const val USERS_BASE_URL = "https://ca587c6ffc4c99c6d454.free.beeceptor.com"
+const val USERS_BASE_URL = "https://cae36b3e1d3976dd9e5d.free.beeceptor.com"
 const val CITIES_BASE_URL = "https://firebasestorage.googleapis.com"
 
 val interceptor = HttpLoggingInterceptor()

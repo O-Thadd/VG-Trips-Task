@@ -1,5 +1,6 @@
 package com.app.vgtask.ui.screens.tripCreation
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInHorizontally
@@ -32,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,6 +50,7 @@ fun TripCreationScreen(
 ) {
     val viewModel: TripCreationViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle(null)
+    val context = LocalContext.current
 
     state?.let {
         StatelessTripCreationScreen(
@@ -65,6 +68,7 @@ fun TripCreationScreen(
 
     LaunchedEffect(key1 = state?.creationStatus) {
         if ((state?.creationStatus ?: DataStatus.DEFAULT)  == DataStatus.PASSED){
+            Toast.makeText(context, "Trip created Successfully!", Toast.LENGTH_SHORT).show()
             goToTrip(state!!.newlyCreatedTripId!!)
         }
     }
