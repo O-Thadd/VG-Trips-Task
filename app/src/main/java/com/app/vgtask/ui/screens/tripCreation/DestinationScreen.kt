@@ -1,6 +1,5 @@
 package com.app.vgtask.ui.screens.tripCreation
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -59,7 +58,8 @@ fun DestinationScreen(
     cities: VGTaskData<List<City>>,
     search: (String) -> Unit,
     refreshCities: () -> Unit,
-    onDestinationClicked: (String) -> Unit
+    onDestinationClicked: (String) -> Unit,
+    goBackToHome: () -> Unit
 ) {
     var searchTerm by remember { mutableStateOf("") }
 
@@ -80,7 +80,7 @@ fun DestinationScreen(
                 Icon(
                     painter = painterResource(id = R.drawable.arrowleft),
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.clickable { goBackToHome() }.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
@@ -137,7 +137,6 @@ fun DestinationScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Log.e("zzz", "cities is: $cities" )
             when (cities.status) {
                 DataStatus.BUSY -> {
                     Box(
@@ -240,7 +239,8 @@ private fun PrevDestinationScreen() {
             cities = previewTestTripCreationUiState.cities,
             search = {  },
             onDestinationClicked = {  },
-            refreshCities = {  }
+            refreshCities = {  },
+            goBackToHome = {  }
         )
     }
 }

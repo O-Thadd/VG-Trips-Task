@@ -13,8 +13,8 @@ import retrofit2.http.Path
 import java.util.HashMap
 import java.util.Objects
 
-const val USERS_BASE_URL = "https://ca3226c27342903d053f.free.beeceptor.com"
-const val CITIES_BASE_URL = "https://ca44ccc3a2f157445ed7.free.beeceptor.com"
+const val USERS_BASE_URL = "https://ca587c6ffc4c99c6d454.free.beeceptor.com"
+const val CITIES_BASE_URL = "https://firebasestorage.googleapis.com"
 
 val interceptor = HttpLoggingInterceptor()
     .setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -35,6 +35,6 @@ interface UsersRemoteService {
 }
 
 interface CitiesRemoteService {
-    @GET("api/cities")
+    @GET("/v0/b/thadd-dev-realm.appspot.com/o/cities.json?alt=media&token=0ed55f6f-8aea-4071-a232-f51b0dc06afc")
     suspend fun getCities(): List<City>
 }

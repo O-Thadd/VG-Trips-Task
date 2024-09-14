@@ -27,4 +27,8 @@ class UserRepo @Inject constructor(private val localStore: VGTaskDataStore, priv
         trips.add(trip)
         remoteService.updateUser(userId, user.copy(trips = trips))
     }
+
+    suspend fun updateUser(user: User){
+        remoteService.updateUser(user.id!!, user)
+    }
 }

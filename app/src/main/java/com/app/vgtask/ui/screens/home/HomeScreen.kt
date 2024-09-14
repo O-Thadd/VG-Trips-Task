@@ -82,7 +82,10 @@ fun HomeScreen(
             enter = slideInVertically { fullHeight -> fullHeight },
             exit = slideOutVertically { fullHeight -> fullHeight }
         ) {
-            TripCreationScreen(goToTrip = goToTrip)
+            TripCreationScreen(
+                goToTrip = goToTrip,
+                goBackToHome = { atTripCreation = false }
+            )
             BackHandler { atTripCreation = false }
         }
     }
@@ -94,7 +97,7 @@ fun HomeScreen(
         }
     }
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(key1 = atTripCreation) {
         viewModel.refresh()
     }
 }
@@ -369,10 +372,18 @@ fun LandingScreen(
                         trips = trips.data,
                         onTripViewClicked = goToTrip
                     )
-                } else {
+                }
+
+                else if (trips.status == DataStatus.BUSY){
+                    Text(text = "Fetching...")
+                }
+
+                else {
                     Text(text = "No trips yet. Your trips will appear hear")
                 }
-            } else {
+            }
+
+            else {
                 Text(text = "No itineraries yet. Your itineraries will appear hear")
             }
         }

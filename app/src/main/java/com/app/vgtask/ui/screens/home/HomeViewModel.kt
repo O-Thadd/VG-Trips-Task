@@ -17,11 +17,12 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val userRepo: UserRepo, private val citiesRepo: CitiesRepo): ViewModel() {
 
-    private val _uiState = MutableStateFlow<VGTaskData<List<UiTrip>>>(VGTaskData(emptyList(), DataStatus.DEFAULT))
+    private val _uiState = MutableStateFlow<VGTaskData<List<UiTrip>>>(VGTaskData(emptyList(), DataStatus.BUSY))
     val trips = _uiState.asStateFlow()
 
     suspend fun refresh() {
         try {
+            _uiState.value = _uiState.value.copy(status = DataStatus.BUSY)
             val gottenTrips = userRepo.getUser().trips?.map { trip ->
                 trip.toUiTrip(viewModelScope) { cityId ->
                     citiesRepo.getCities().find { cityId == it.id }!!

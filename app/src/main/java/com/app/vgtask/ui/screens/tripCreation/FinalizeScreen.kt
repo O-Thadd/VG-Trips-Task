@@ -2,6 +2,7 @@ package com.app.vgtask.ui.screens.tripCreation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,7 +46,8 @@ fun FinalizeScreen(
     tripName: String?,
     tripStyle: TripStyle?,
     tripDescription: String?,
-    onComplete: (String, String, String) -> Unit
+    onComplete: (String, String, String) -> Unit,
+    goBackToHome: () -> Unit
 ) {
     var name by remember(tripName) { mutableStateOf(tripName) }
     var style by remember(tripStyle) { mutableStateOf(tripStyle) }
@@ -53,6 +55,7 @@ fun FinalizeScreen(
 
     Column {
         Surface(
+            onClick = goBackToHome,
             color = Color.Black.copy(alpha = 0.5f),
             modifier = Modifier
                 .height(120.dp)
@@ -84,7 +87,7 @@ fun FinalizeScreen(
                         Icon(
                             painter = painterResource(id = R.drawable.blackx),
                             contentDescription = null,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.clickable { goBackToHome() }.size(20.dp)
                         )
                     }
 
@@ -246,7 +249,8 @@ private fun PrevFinalizeScreen() {
             tripName = null,
             tripStyle = null,
             tripDescription = null,
-            onComplete = { _, _, _ -> }
+            onComplete = { _, _, _ -> },
+            goBackToHome = {  }
         )
     }
 }

@@ -48,7 +48,8 @@ fun DateScreen(
     endDate: CalendarItem?,
     setStart: (CalendarItem) -> Unit,
     setEnd: (CalendarItem) -> Unit,
-    onDateConfirmed: () -> Unit
+    onDateConfirmed: () -> Unit,
+    goBackToHome: () -> Unit
 ) {
     val calendarItems by remember { mutableStateOf(generateCalendarItems()) }
     var activeDateSelection by remember { mutableStateOf(ActiveDateSelection.START) }
@@ -64,7 +65,7 @@ fun DateScreen(
                 Icon(
                     painter = painterResource(id = R.drawable.blackx),
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.clickable { goBackToHome() }.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
@@ -261,7 +262,8 @@ private fun PrevDateScreen() {
             endDate = null,
             setStart = { },
             setEnd = { },
-            onDateConfirmed = { }
+            onDateConfirmed = { },
+            goBackToHome = {  }
         )
     }
 }

@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,10 +39,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.app.vgtask.CalendarItem
 import com.app.vgtask.ui.models.DataStatus
 import com.app.vgtask.ui.models.TripStyle
+import javax.annotation.Untainted
 
 @Composable
 fun TripCreationScreen(
-    goToTrip: (String) -> Unit
+    goToTrip: (String) -> Unit,
+    goBackToHome: () -> Unit
 ) {
     val viewModel: TripCreationViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle(null)
@@ -55,7 +58,8 @@ fun TripCreationScreen(
             onEndDateSelected = { viewModel.setEndDate(it) },
             onComplete = { name, style, description -> viewModel.completeInfo(name, style, description) },
             resetCreationStatus = {  viewModel.resetCreationStatus() },
-            refreshCities = { viewModel.refreshCities() }
+            refreshCities = { viewModel.refreshCities() },
+            goBackToHome = goBackToHome
         )
     }
 
@@ -80,10 +84,11 @@ fun StatelessTripCreationScreen(
     onEndDateSelected: (CalendarItem) -> Unit,
     onComplete: (String, String, String) -> Unit,
     resetCreationStatus: () -> Unit,
-    refreshCities: () -> Unit
+    refreshCities: () -> Unit,
+    goBackToHome: () -> Unit
 ) {
 
-    var tripCreationStage by remember { mutableStateOf(1) }
+    var tripCreationStage by remember { mutableIntStateOf(1) }
 
     Box {
         AnimatedContent(
@@ -99,7 +104,7 @@ fun StatelessTripCreationScreen(
                 }
             }
         ) {
-            when (tripCreationStage) {
+            when (it) {
                 1 -> DestinationScreen(
                     cities = state.cities,
                     search = search,
@@ -107,7 +112,8 @@ fun StatelessTripCreationScreen(
                         onDestinationSelected(it)
                         tripCreationStage = 2
                     },
-                    refreshCities = refreshCities
+                    refreshCities = refreshCities,
+                    goBackToHome = goBackToHome
                 )
 
                 2 -> {
@@ -116,7 +122,8 @@ fun StatelessTripCreationScreen(
                         endDate = state.endDate,
                         setStart = onStartDateSelected,
                         setEnd = onEndDateSelected,
-                        onDateConfirmed = { tripCreationStage = 3 }
+                        onDateConfirmed = { tripCreationStage = 3 },
+                        goBackToHome = goBackToHome
                     )
                     BackHandler { tripCreationStage = 1 }
                 }
@@ -126,7 +133,8 @@ fun StatelessTripCreationScreen(
                         tripName = state.tripName,
                         tripStyle = TripStyle.getStyle(state.style),
                         tripDescription = state.description,
-                        onComplete = onComplete
+                        onComplete = onComplete,
+                        goBackToHome = goBackToHome
                     )
                     BackHandler { tripCreationStage = 2 }
                 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,7 +53,6 @@ import com.app.vgtask.ui.models.DataStatus
 import com.app.vgtask.ui.theme.VGTaskTheme
 import com.app.vgtask.ui.theme.bold
 import com.app.vgtask.ui.theme.regular
-import com.app.vgtask.ui.trip1
 import com.app.vgtask.ui.trip2
 
 @Composable
@@ -63,8 +63,14 @@ fun TripScreen(
     val trip by viewModel.trip.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    if (trip.status == DataStatus.DEFAULT && trip.data != null){
-        StatelessTripScreen(trip = trip.data!!)
+    if (trip.data != null){
+        StatelessTripScreen(
+            trip = trip.data!!,
+            status = trip.status,
+            resetStatus = { viewModel.resetStatus() },
+            addItinerary = { addHotel, addFlight, addActivity -> viewModel.addItinerary(addHotel, addFlight, addActivity) },
+            goBackToHome = goBackToHome
+        )
     } else if (trip.status == DataStatus.BUSY){
         Box(
             contentAlignment = Alignment.Center,
@@ -77,7 +83,7 @@ fun TripScreen(
     }
 
 
-    if (trip.status == DataStatus.FAILED){
+    if (trip.status == DataStatus.FAILED && trip.data == null){
         LaunchedEffect(key1 = trip.status) {
             Toast.makeText(context, "Failed to get trip. Check network and try again", Toast.LENGTH_SHORT).show()
             goBackToHome()
@@ -88,197 +94,248 @@ fun TripScreen(
 
 
 @Composable
-fun StatelessTripScreen(trip: UiTrip) {
-    Column(
-        modifier = Modifier.verticalScroll(rememberScrollState())
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.arrowleft),
-                contentDescription = null,
-                modifier = Modifier.size(20.dp)
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(text = "Plan a Trip", style = MaterialTheme.typography.headlineLarge, color = Color(0xFF1D2433))
-        }
+fun StatelessTripScreen(
+    trip: UiTrip,
+    status: DataStatus,
+    resetStatus: () -> Unit,
+    addItinerary: (addHotel: Boolean, addFlight: Boolean, addActivity: Boolean) -> Unit,
+    goBackToHome: () -> Unit
+) {
+    val context = LocalContext.current
+    fun showUnimplemented() {
+        Toast.makeText(context, "Feature not implemented 👀", Toast.LENGTH_SHORT).show()
+    }
 
-        Spacer(modifier = Modifier.height(18.dp))
-
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(trip.imageUrl)
-                .crossfade(true)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            error = painterResource(id = R.drawable.bodypalm),
-            modifier = Modifier
-                .height(height = 235.dp)
-                .fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
+    Box {
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp)
             ) {
-                Surface(
-                    color = Color(0xFFF7F9FC),
-                    shape = RoundedCornerShape(4.dp)
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(4.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.calendarblanksmall),
-                            contentDescription = null
-                        )
-                        Text(
-                            text = trip.startDate,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = Color(0xFF1D2433)
-                        )
-                        Image(
-                            painter = painterResource(id = R.drawable.arrowright),
-                            contentDescription = null
-                        )
-                        Text(
-                            text = trip.endDate,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = Color(0xFF1D2433)
-                        )
-                    }
-                }
+                Icon(
+                    painter = painterResource(id = R.drawable.arrowleft),
+                    contentDescription = null,
+                    modifier = Modifier.clickable { goBackToHome() }.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = trip.name,
+                    text = "Plan a Trip",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = Color(0xFF1D2433)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(18.dp))
+
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(trip.imageUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                error = painterResource(id = R.drawable.bodypalm),
+                modifier = Modifier
+                    .height(height = 235.dp)
+                    .fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Surface(
+                        color = Color(0xFFF7F9FC),
+                        shape = RoundedCornerShape(4.dp)
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(4.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.calendarblanksmall),
+                                contentDescription = null
+                            )
+                            Text(
+                                text = trip.startDate,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = Color(0xFF1D2433)
+                            )
+                            Image(
+                                painter = painterResource(id = R.drawable.arrowright),
+                                contentDescription = null
+                            )
+                            Text(
+                                text = trip.endDate,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = Color(0xFF1D2433)
+                            )
+                        }
+                    }
+                    Text(
+                        text = trip.name,
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = "${trip.destination} | ${trip.style}",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color(0xFF676E7E)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Surface(
+                        onClick = { showUnimplemented() },
+                        shape = RoundedCornerShape(4.dp),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(12.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.handshake),
+                                contentDescription = null
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Trip Collaboration",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontFamily = bold),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+
+                    Surface(
+                        onClick = { showUnimplemented() },
+                        shape = RoundedCornerShape(4.dp),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(12.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.sharefat),
+                                contentDescription = null
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Share Trip",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontFamily = bold),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.dotsthree),
+                        contentDescription = null
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(28.dp))
+
+                // add-itinerary cards
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    AddItineraryCard(
+                        title = "Activities",
+                        buttonText = "Add Activities",
+                        containerColor = Color(0xFF000031),
+                        titleColor = Color.White,
+                        bodyColor = Color.White,
+                        buttonColor = MaterialTheme.colorScheme.primary,
+                        buttonTextColor = Color.White,
+                        onButtonClicked = { addItinerary(false, false, true) }
+                    )
+
+                    AddItineraryCard(
+                        title = "Hotels",
+                        buttonText = "Add Hotels",
+                        containerColor = Color(0xFFE7F0FF),
+                        titleColor = Color.Black,
+                        bodyColor = Color(0xFF1D2433),
+                        buttonColor = MaterialTheme.colorScheme.primary,
+                        buttonTextColor = Color.White,
+                        onButtonClicked = { addItinerary(true, false, false) }
+                    )
+
+                    AddItineraryCard(
+                        title = "Flights",
+                        buttonText = "Add Flights",
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleColor = Color.White,
+                        bodyColor = Color.White,
+                        buttonColor = Color.White,
+                        buttonTextColor = MaterialTheme.colorScheme.primary,
+                        onButtonClicked = { addItinerary(false, true, false) }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(22.dp))
+
+                Text(
+                    text = "Trip itineraries",
                     style = MaterialTheme.typography.headlineSmall,
                     color = Color.Black
                 )
                 Text(
-                    text = "${trip.destination} | ${trip.style}",
+                    text = "Your trip itineraries are placed here",
                     style = MaterialTheme.typography.labelMedium,
                     color = Color(0xFF676E7E)
                 )
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Surface(
-                    onClick = { /*TODO*/ },
-                    shape = RoundedCornerShape(4.dp),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.padding(12.dp)
-                    ) {
-                        Image(painter = painterResource(id = R.drawable.handshake), contentDescription = null)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "Trip Collaboration",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontFamily = bold),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-
-                Surface(
-                    onClick = { /*TODO*/ },
-                    shape = RoundedCornerShape(4.dp),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.padding(12.dp)
-                    ) {
-                        Image(painter = painterResource(id = R.drawable.sharefat), contentDescription = null)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "Share Trip",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontFamily = bold),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-
-                Icon(painter = painterResource(id = R.drawable.dotsthree), contentDescription = null)
-            }
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            // add-itinerary cards
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                AddItineraryCard(
-                    title = "Activities",
-                    buttonText = "Add Activities",
-                    containerColor = Color(0xFF000031),
-                    titleColor = Color.White,
-                    bodyColor = Color.White,
-                    buttonColor = MaterialTheme.colorScheme.primary,
-                    buttonTextColor = Color.White
+                FlightItineraryCard(
+                    hasFlight = trip.hasFlights,
+                    onButtonClicked = {
+                        addItinerary(false, true, false)
+                    },
+                    showUnimplemented = { showUnimplemented() }
                 )
 
-                AddItineraryCard(
-                    title = "Hotels",
-                    buttonText = "Add Hotels",
-                    containerColor = Color(0xFFE7F0FF),
-                    titleColor = Color.Black,
-                    bodyColor = Color(0xFF1D2433),
-                    buttonColor = MaterialTheme.colorScheme.primary,
-                    buttonTextColor = Color.White
+                Spacer(modifier = Modifier.height(16.dp))
+
+                HotelItineraryCard(
+                    hasHotel = trip.hasHotels,
+                    onButtonClicked = {
+                        addItinerary(true, false, false)
+                    },
+                    showUnimplemented = { showUnimplemented() }
                 )
 
-                AddItineraryCard(
-                    title = "Flights",
-                    buttonText = "Add Flights",
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleColor = Color.White,
-                    bodyColor = Color.White,
-                    buttonColor = Color.White,
-                    buttonTextColor = MaterialTheme.colorScheme.primary
+                Spacer(modifier = Modifier.height(16.dp))
+
+                ActivityItineraryCard(
+                    hasActivity = trip.hasActivities,
+                    onButtonClicked = {
+                        addItinerary(false, false, true)
+                    },
+                    showUnimplemented = { showUnimplemented() }
                 )
             }
+        }
 
-            Spacer(modifier = Modifier.height(22.dp))
-
-            Text(
-                text = "Trip itineraries",
-                style = MaterialTheme.typography.headlineSmall,
-                color = Color.Black
-            )
-            Text(
-                text = "Your trip itineraries are placed here",
-                style = MaterialTheme.typography.labelMedium,
-                color = Color(0xFF676E7E)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            FlightItineraryCard(hasFlight = false)
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            HotelItineraryCard(hasHotel = false)
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            ActivityItineraryCard(hasActivity = false)
+        if (status == DataStatus.BUSY) {
+            ItineraryUpdateStatusDialog(status = status, resetStatus = resetStatus)
         }
     }
 }
@@ -288,7 +345,11 @@ fun StatelessTripScreen(trip: UiTrip) {
 private fun PrevTripScreen() {
     VGTaskTheme {
         StatelessTripScreen(
-            trip = trip2
+            trip = trip2,
+            status = DataStatus.DEFAULT,
+            resetStatus = {  },
+            addItinerary = { _, _, _ -> },
+            goBackToHome = {  }
         )
     }
 }
@@ -301,7 +362,8 @@ fun AddItineraryCard(
     titleColor: Color,
     bodyColor: Color,
     buttonColor: Color,
-    buttonTextColor: Color
+    buttonTextColor: Color,
+    onButtonClicked: () -> Unit
 ) {
     Surface(
         shape = RoundedCornerShape(4.dp),
@@ -326,7 +388,7 @@ fun AddItineraryCard(
             )
             Spacer(modifier = Modifier.height(36.dp))
             FilledTonalButton(
-                onClick = { /*TODO*/ },
+                onClick = onButtonClicked,
                 colors = ButtonDefaults.buttonColors(buttonColor, buttonTextColor),
                 shape = RoundedCornerShape(4.dp)
             ) {
@@ -340,7 +402,11 @@ fun AddItineraryCard(
 }
 
 @Composable
-fun FlightItineraryCard(hasFlight: Boolean) {
+fun FlightItineraryCard(
+    hasFlight: Boolean,
+    onButtonClicked: () -> Unit,
+    showUnimplemented: () -> Unit
+) {
     Surface(
         color = Color(0xFFF0F2F5),
         shape = RoundedCornerShape(4.dp)
@@ -387,7 +453,7 @@ fun FlightItineraryCard(hasFlight: Boolean) {
                         Spacer(modifier = Modifier.height(12.dp))
 
                         FilledTonalButton(
-                            onClick = { /*TODO*/ },
+                            onClick = onButtonClicked,
                             shape = RoundedCornerShape(4.dp),
                             colors = ButtonDefaults.buttonColors(),
                             modifier = Modifier.width(228.dp)
@@ -591,6 +657,7 @@ fun FlightItineraryCard(hasFlight: Boolean) {
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Surface(
+                            onClick = showUnimplemented,
                             color = Color(0xFFFBEAE9),
                             modifier = Modifier.fillMaxWidth()
                         ) {
@@ -627,7 +694,7 @@ fun FlightItineraryCard(hasFlight: Boolean) {
 //}
 
 @Composable
-fun HotelItineraryCard(hasHotel: Boolean) {
+fun HotelItineraryCard(hasHotel: Boolean, onButtonClicked: () -> Unit, showUnimplemented: () -> Unit) {
     Surface(
         color = Color(0xFF344054),
         shape = RoundedCornerShape(4.dp)
@@ -674,7 +741,7 @@ fun HotelItineraryCard(hasHotel: Boolean) {
                         Spacer(modifier = Modifier.height(12.dp))
 
                         FilledTonalButton(
-                            onClick = { /*TODO*/ },
+                            onClick = onButtonClicked,
                             shape = RoundedCornerShape(4.dp),
                             colors = ButtonDefaults.buttonColors(),
                             modifier = Modifier.width(228.dp)
@@ -845,6 +912,7 @@ fun HotelItineraryCard(hasHotel: Boolean) {
 
                         //Remove button
                         Surface(
+                            onClick = showUnimplemented,
                             color = Color(0xFFFBEAE9),
                             modifier = Modifier.fillMaxWidth()
                         ) {
@@ -883,7 +951,11 @@ fun HotelItineraryCard(hasHotel: Boolean) {
 
 
 @Composable
-fun ActivityItineraryCard(hasActivity: Boolean) {
+fun ActivityItineraryCard(
+    hasActivity: Boolean,
+    onButtonClicked: () -> Unit,
+    showUnimplemented: () -> Unit
+) {
     Surface(
         color = MaterialTheme.colorScheme.primary,
         shape = RoundedCornerShape(4.dp)
@@ -930,7 +1002,7 @@ fun ActivityItineraryCard(hasActivity: Boolean) {
                         Spacer(modifier = Modifier.height(12.dp))
 
                         FilledTonalButton(
-                            onClick = { /*TODO*/ },
+                            onClick = onButtonClicked,
                             shape = RoundedCornerShape(4.dp),
                             colors = ButtonDefaults.buttonColors(),
                             modifier = Modifier.width(228.dp)
@@ -1111,6 +1183,7 @@ fun ActivityItineraryCard(hasActivity: Boolean) {
 
                         //Remove button
                         Surface(
+                            onClick = showUnimplemented,
                             color = Color(0xFFFBEAE9),
                             modifier = Modifier.fillMaxWidth()
                         ) {
@@ -1145,3 +1218,52 @@ fun ActivityItineraryCard(hasActivity: Boolean) {
 //        ActivityItineraryCard(hasActivity = true)
 //    }
 //}
+
+
+@Composable
+fun ItineraryUpdateStatusDialog(
+    status: DataStatus,
+    resetStatus: () -> Unit
+) {
+    Surface(
+        color = Color.Black.copy(0.5f)
+    ){
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
+                    .background(Color(0xFFE7F0FF), RoundedCornerShape(4.dp))
+                    .size(330.dp, 280.dp)
+            ) {
+
+                if ( status == DataStatus.FAILED){
+                    Text(
+                        text = "Failed to update itinerary.\nCheck network and try again.",
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    FilledTonalButton(
+                        onClick = { resetStatus() },
+                        colors = ButtonDefaults.filledTonalButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(text = "Okay")
+                    }
+                }
+
+                else {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = "Updating itinerary...")
+                }
+            }
+        }
+    }
+}
